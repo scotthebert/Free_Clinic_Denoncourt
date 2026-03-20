@@ -1,0 +1,73 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# Package(s) -----------
+
+```{r}
+library(tidyverse)
+```
+
+# Loading and transforming data -----------
+
+```{r}
+freec <- read_csv("C:/Users/hebers/Downloads/free clinic match dataset.csv")
+freec <- freec %>% 
+  mutate(freeclinic = ifelse(`Free Clinic Participation` == "Non-participant", 0, 1),
+         freeclinic_tiers = relevel(as.factor(`Free Clinic Participation`), ref = "Non-participant"),
+         ahec = ifelse(`AHEC Rural Health` == "Participant" | `AHEC Urban Health` == "Participant", 1, 0),
+         pcp_oee = ifelse(`Primary Care OEE` == "Participant", 1, 0),
+         primary_care = ifelse(Specialty == "Family Medicine" | Specialty == "Internal Medicine" | Specialty == "Medicine-Pediatrics" | 
+                                 Specialty == "Medicine–Pediatrics" | Specialty == "Medicine-Primary" | Specialty == "Medicine–Primary" | 
+                                 Specialty == "Pediatrics", 1, 0),
+         family_med = ifelse(Specialty == "Family Medicine", 1, 0))
+```
+
+# Binary Free Clinic Models ----------
+
+```{r}
+primary_only <- glm(primary_care ~ freeclinic, family = "binomial", data = freec)
+summary(primary_only)
+primary_all <- glm(primary_care ~ freeclinic + ahec + pcp_oee, family = "binomial", data = freec)
+summary(primary_all)
+```
+
+```{r}
+p.adjust(coef(summary(primary_all))[, 4], method = "fdr")
+```
+
+```{r}
+family_only <- glm(family_med ~ freeclinic, family = "binomial", data = freec)
+summary(family_only)
+family_all <- glm(family_med ~ freeclinic + ahec + pcp_oee, family = "binomial", data = freec)
+summary(family_all)
+```
+
+```{r}
+ahec_primary <- glm(primary_care ~ ahec, family = "binomial", data = freec)
+summary(ahec_primary)
+ahec_fm <- glm(family_med ~ ahec, family = "binomial", data = freec)
+summary(ahec_fm)
+```
+
+# Tiered Free Clinic Models -------------
+
+```{r}
+primary_only_tiered <- glm(primary_care ~ freeclinic_tiers, family = "binomial", data = freec)
+summary(primary_only_tiered)
+primary_all_tiered <- glm(primary_care ~ freeclinic_tiers + ahec + pcp_oee, family = "binomial", data = freec)
+summary(primary_all_tiered)
+```
+
+```{r}
+p.adjust(coef(summary(primary_all_tiered))[, 4], method = "fdr")
+```
+
+```{r}
+family_only_tiered <- glm(family_med ~ freeclinic_tiers, family = "binomial", data = freec)
+summary(family_only_tiered)
+family_all_tiered <- glm(family_med ~ freeclinic_tiers + ahec + pcp_oee, family = "binomial", data = freec)
+summary(family_all_tiered)
+```
+
