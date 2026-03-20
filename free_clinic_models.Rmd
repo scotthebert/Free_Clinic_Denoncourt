@@ -34,6 +34,7 @@ summary(primary_all)
 ```
 
 ```{r}
+exp(coef(primary_all))
 p.adjust(coef(summary(primary_all))[, 4], method = "fdr")
 ```
 
@@ -42,6 +43,11 @@ family_only <- glm(family_med ~ freeclinic, family = "binomial", data = freec)
 summary(family_only)
 family_all <- glm(family_med ~ freeclinic + ahec + pcp_oee, family = "binomial", data = freec)
 summary(family_all)
+```
+
+```{r}
+exp(coef(family_all))
+p.adjust(coef(summary(family_all))[, 4], method = "fdr")
 ```
 
 ```{r}
@@ -61,6 +67,7 @@ summary(primary_all_tiered)
 ```
 
 ```{r}
+exp(coef(primary_all_tiered))
 p.adjust(coef(summary(primary_all_tiered))[, 4], method = "fdr")
 ```
 
@@ -69,5 +76,10 @@ family_only_tiered <- glm(family_med ~ freeclinic_tiers, family = "binomial", da
 summary(family_only_tiered)
 family_all_tiered <- glm(family_med ~ freeclinic_tiers + ahec + pcp_oee, family = "binomial", data = freec)
 summary(family_all_tiered)
+```
+
+```{r}
+exp(coef(family_all_tiered))
+p.adjust(coef(summary(family_all_tiered))[, 4], method = "fdr")
 ```
 
