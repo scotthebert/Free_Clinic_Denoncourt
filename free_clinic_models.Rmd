@@ -7,6 +7,7 @@ output: html_notebook
 
 ```{r}
 library(tidyverse)
+library(car)
 ```
 
 # Loading and transforming data -----------
@@ -81,5 +82,14 @@ summary(family_all_tiered)
 ```{r}
 exp(coef(family_all_tiered))
 p.adjust(coef(summary(family_all_tiered))[, 4], method = "fdr")
+```
+
+# Checking for multicollinearity -----------------
+
+```{r}
+vif(primary_all)
+vif(family_all)
+vif(primary_all_tiered)
+vif(family_all_tiered)
 ```
 
